@@ -19,33 +19,32 @@ body {
 .slider-container {
   position: relative;
   width: 300px;
-  height: 8px;
+  height: 12px;
 }
 
 .slider-track {
   position: absolute;
   width: 100%;
-  height: 8px;
-  background-color: #ddd;
-  border-radius: 4px;
+  height: 12px;
+  background-color: #E5E5E5;
+  border-radius: 13px;
+  border: 1px solid #909090;
 }
 
 .slider-range {
   position: absolute;
-  height: 8px;
-  background-color: #4caf50; /* colore verde per il range attivo */
-  border-radius: 4px;
-  left: 20%;
-  right: 20%;
+  height: 12px;
+  background-color: #007A91; /* colore verde per il range attivo */
+  border-radius: 13px;
+  border: 1px solid #007A91;
 }
 
 .thumb {
   position: absolute;
   top: 50%;
-  width: 18px;
-  height: 18px;
-  background-color: #fff;
-  border: 2px solid #4caf50;
+  width: 28px;
+  height: 28px;
+  background-color: #007A91;
   border-radius: 50%;
   cursor: pointer;
   
@@ -55,13 +54,6 @@ body {
          transform: translate(-50%, -50%);
 }
 
-.thumb-left {
-  left: 20%;
-}
-
-.thumb-right {
-  left: 80%;
-}
 
 .slider-display {
   margin-left: 100px;
