@@ -36,11 +36,22 @@ document.addEventListener('DOMContentLoaded', function() {
   thumbLeft.addEventListener('mousedown', function() {
     isDraggingLeft = true;
   });
+  thumbLeft.addEventListener('touchstart', function() {
+    isDraggingLeft = true;
+  });
+
   thumbRight.addEventListener('mousedown', function() {
+    isDraggingRight = true;
+  });
+  thumbRight.addEventListener('touchstart', function() {
     isDraggingRight = true;
   });
   
   document.addEventListener('mouseup', function() {
+    isDraggingLeft = false;
+    isDraggingRight = false;
+  });
+  document.addEventListener('touchend', function() {
     isDraggingLeft = false;
     isDraggingRight = false;
   });
@@ -51,6 +62,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     var rect = slider.getBoundingClientRect();
     var posPercent = ((e.clientX - rect.left) / rect.width) * 100;
+    posPercent = Math.max(0, Math.min(100, posPercent));
+    var newValue = minRange + ((maxRange - minRange) * (posPercent / 100));
+    
+    if (isDraggingLeft) {
+      newValue = Math.min(newValue, rightValue);
+      leftValue = newValue;
+    }
+    if (isDraggingRight) {
+      newValue = Math.max(newValue, leftValue);
+      rightValue = newValue;
+    }
+    updatePositions();
+  });
+
+  document.addEventListener('touchmove', function(e) {
+    if (!isDraggingLeft && !isDraggingRight) {
+      return;
+    }
+    var rect = slider.getBoundingClientRect();
+    var posPercent = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
     posPercent = Math.max(0, Math.min(100, posPercent));
     var newValue = minRange + ((maxRange - minRange) * (posPercent / 100));
     
