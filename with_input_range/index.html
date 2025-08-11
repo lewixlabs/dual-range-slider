@@ -2,19 +2,14 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Dual Range Slider IE11</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="slider-container">
-        <div class="slider-track"></div>
-        <div class="slider-thumb" id="thumb-min"></div>
-        <div class="slider-thumb" id="thumb-max"></div>
-        <input type="hidden" id="input-min" value="20">
-        <input type="hidden" id="input-max" value="80">
-        <div class="slider-values">
-            <span id="value-min">20</span> - <span id="value-max">80</span>
-        </div>
+        <input type="range" min="0" max="100" id="myRange" value="50">
+        <span id="rangeValue">50</span>
     </div>
     <script src="script.js"></script>
 </body>
