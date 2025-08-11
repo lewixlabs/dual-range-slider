@@ -1,3 +1,17 @@
+#myRange::-ms-fill-lower {
+    background: #ddd;
+}
+#myRange::-ms-fill-upper {
+    background: green;
+}
+
+/* Track verde a sinistra per myRangeInverse */
+#myRangeInverse::-ms-fill-lower {
+    background: green;
+}
+#myRangeInverse::-ms-fill-upper {
+    background: #ddd;
+}
 /* Nascondi tooltip nativo IE11/Edge */
 input[type="range"]::-ms-tooltip {
     display: none;
@@ -37,22 +51,4 @@ input[type="range"]::-ms-fill-upper {
 
 input[type="range"]::-ms-fill-upper {
     background: green;
-}
-
-/* WebKit (Chrome, Safari, Edge Chromium) */
-input[type="range"]::-webkit-slider-runnable-track {
-    height: 6px;
-    background: #ddd;
-    border-radius: 2px;
-}
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: blue;
-    border: none;
-    cursor: pointer;
-    margin-top: -7px; /* centra il thumb sopra il track */
-    box-shadow: 0 0 0 2px #fff;
 }
