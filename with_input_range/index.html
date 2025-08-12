@@ -1,20 +1,234 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dual Range Slider IE11</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 100px;
+        }
+        .rangeWrap {
+            position: relative;
+            width: 100%;
+            height: 32px;
+        }
+        .rangeTrack {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #e5e5e5;
+            border: 1px solid #666;
+            height: 8px;
+            border-radius: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .rangeTrackFill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #007a91;
+            height: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .rangeThumbLeft, .rangeThumbRight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            background-color: #007a91;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+        }
+        .rangeThumbLeft {
+            left: 0%;
+        }
+        .rangeThumbRight {
+            left: 100%;
+        }
+        .rangeInputLeft:focus ~ .rangeThumbLeft {
+            box-shadow: 0 0 0 3px rgb(158, 210, 224);
+        }
+        .rangeInputRight:focus ~ .rangeThumbRight {
+            box-shadow: 0 0 0 3px rgb(158, 210, 224);
+        }
+        .invisible {
+            opacity: 0;
+            height: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+    </style>
 </head>
+
 <body>
-    <div class="slider-container">
-        <input type="range" min="0" max="100" id="myRange" value="10">
-        <span id="rangeValue">10</span>
+    <div class="rangeWrap" data-min="10" data-max="90" data-start="50" data-end="70">
+        <input type="range" step="0.1" class="rangeInputLeft invisible">
+        <input type="range" step="0.1" class="rangeInputRight invisible">
+        <div class="rangeTrack"></div>
+        <div class="rangeTrackFill"></div>
+        <div class="rangeThumbLeft"></div>
+        <div class="rangeThumbRight"></div>
     </div>
-    <div class="slider-container">
-    <input type="range" min="0" max="100" id="myRangeInverse" value="90" class="range-inverse">
-        <span id="rangeValueInverse">90</span>
+
+    <div>
+        <div>Min: <b><span id="min"></span></b></div>
+        <div>Max: <b><span id="max"></span></b></div>
+        <div>Start: <b><span id="start"></span></b></div>
+        <div>End: <b><span id="end"></span></b></div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        console.log("Ready!");
+
+        const range = document.querySelector(".rangeWrap");
+        const inputLeft = document.querySelector(".rangeInputLeft");
+        const inputRight = document.querySelector(".rangeInputRight");
+        const track = document.querySelector(".rangeTrack");
+        const trackFill = document.querySelector(".rangeTrackFill");
+        const thumbLeft = document.querySelector(".rangeThumbLeft");
+        const thumbRight = document.querySelector(".rangeThumbRight");
+
+        thumbLeft.addEventListener("mousedown", function() {
+            inputLeft.focus();
+        });
+        thumbRight.addEventListener("mousedown", function() {
+            inputRight.focus();
+        });
+
+        function getPosition(element) {
+            var rect = element.getBoundingClientRect();
+            return { x: rect.left, y: rect.top, width: rect.width, height: rect.height };
+        }
+
+        function clamp(value, min, max) {
+            return Math.min(Math.max(value, min), max);
+        }
+
+        var THUMB_SIZE = 32;
+        var THUMB_HALF = THUMB_SIZE / 2;
+        var START_TRACK = getPosition(track).x;
+        var TRACK_LENGTH = getPosition(track).width;
+
+        function init() {
+            var defVal = getInputDefaultValues();
+            inputLeft.value = defVal.start;
+            inputRight.value = defVal.end;
+            calcThumbPosition((defVal.start / 100) * TRACK_LENGTH, thumbLeft);
+            calcThumbPosition((defVal.end / 100) * TRACK_LENGTH, thumbRight);
+            calcTrackFill();
+            showData();
+        }
+        init();
+
+        function getInputDefaultValues() {
+            var min = parseInt(range.getAttribute("data-min"));
+            var max = parseInt(range.getAttribute("data-max"));
+            var start = parseInt(range.getAttribute("data-start"));
+            var end = parseInt(range.getAttribute("data-end"));
+            return { min: min, max: max, start: start, end: end };
+        }
+
+        function calcThumbPosition(x, thumb) {
+            var thumbLeftX = getPosition(thumbLeft).x;
+            var thumbRightX = getPosition(thumbRight).x;
+            const newLeft = clamp(
+                x - START_TRACK,
+                thumb === thumbLeft ? 0 : thumbLeftX - START_TRACK + THUMB_HALF,
+                thumb === thumbLeft ? thumbRightX - START_TRACK + THUMB_HALF : TRACK_LENGTH
+            );
+            thumb.style.left = newLeft + "px";
+            return newLeft;
+        }
+
+        function calcTrackFill() {
+            var thumbLeftX = getPosition(thumbLeft).x;
+            var thumbRightX = getPosition(thumbRight).x;
+            trackFill.style.left = (thumbLeftX - START_TRACK + 5) + "px";
+            trackFill.style.width = (thumbRightX - thumbLeftX + 5) + "px";
+        }
+
+        function calcInputValues(input, newLeft) {
+            var defVal = getInputDefaultValues();
+            var min = defVal.min;
+            var max = defVal.max;
+
+            const perc = newLeft / TRACK_LENGTH;
+            const newValue = perc * (max - min) + min;
+            input.value = newValue;
+
+            var changeEvt = document.createEvent("HTMLEvents");
+            var inputEvt = document.createEvent("HTMLEvents");
+            changeEvt.initEvent("change", true, false);
+            inputEvt.initEvent("input", true, false);
+            input.dispatchEvent(changeEvt);
+            input.dispatchEvent(inputEvt);
+        }
+
+        function logInputValues() {
+            console.log("inputLeft value", inputLeft.value);
+            console.log("inputRight value", inputRight.value);
+        }
+
+        function handleChange(input, thumb) {
+            function handleDown(evtDown) {
+                function handleMove(evtMove) {
+                    var mouseX = evtMove.clientX;
+                    var newLeft = calcThumbPosition(mouseX, thumb);
+                    calcTrackFill();
+                    calcInputValues(input, newLeft);
+                    logInputValues();
+                };
+                document.addEventListener("mousemove", handleMove);
+
+                function handleUp() {
+                    document.removeEventListener("mousemove", handleMove);
+                    document.removeEventListener("mouseup", handleUp);
+                };
+                document.addEventListener("mouseup", handleUp);
+            };
+            thumb.addEventListener("mousedown", handleDown);
+        };
+
+        handleChange(inputLeft, thumbLeft);
+        handleChange(inputRight, thumbRight);
+
+
+        // Show debugging data
+        function showData() {
+            var minEl = document.querySelector("#min");
+            var maxEl = document.querySelector("#max");
+            var startEl = document.querySelector("#start");
+            var endEl = document.querySelector("#end");
+
+            var min = parseInt(range.getAttribute("data-min"));
+            var max = parseInt(range.getAttribute("data-max"));
+
+            minEl.innerHTML = min;
+            maxEl.innerHTML = max;
+            startEl.innerHTML = inputLeft.value;
+            endEl.innerHTML = inputRight.value;
+        }
+        inputLeft.addEventListener("input", function() {
+            showData();
+        });
+        inputRight.addEventListener("input", function() {
+            showData();
+        });
+    </script>
 </body>
+
 </html>
