@@ -1,0 +1,74 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 100px;
+}
+
+.rangeWrap {
+    position: relative;
+    width: 100%;
+    height: 32px;
+}
+
+.rangeTrack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #e5e5e5;
+    border: 1px solid #666;
+    height: 8px;
+    border-radius: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.rangeTrackFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #007a91;
+    height: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.rangeThumbLeft,
+.rangeThumbRight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    background-color: #007a91;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+}
+
+.rangeThumbLeft {
+    left: 0%;
+}
+
+.rangeThumbRight {
+    left: 100%;
+}
+
+.rangeInputLeft:focus~.rangeThumbLeft {
+    box-shadow: 0 0 0 3px rgb(158, 210, 224);
+}
+
+.rangeInputRight:focus~.rangeThumbRight {
+    box-shadow: 0 0 0 3px rgb(158, 210, 224);
+}
+
+.invisible {
+    opacity: 0;
+    height: 0;
+    position: absolute;
+    pointer-events: none;
+}

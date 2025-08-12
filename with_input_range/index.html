@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="rangeWrap" data-min="10" data-max="90" data-start="50" data-end="70">
+        <input type="range" step="0.1" class="rangeInputLeft invisible">
+        <input type="range" step="0.1" class="rangeInputRight invisible">
+        <div class="rangeTrack"></div>
+        <div class="rangeTrackFill"></div>
+        <div class="rangeThumbLeft"></div>
+        <div class="rangeThumbRight"></div>
+    </div>
+
+    <div>
+        <div>Min: <b><span id="min"></span></b></div>
+        <div>Max: <b><span id="max"></span></b></div>
+        <div>Start: <b><span id="start"></span></b></div>
+        <div>End: <b><span id="end"></span></b></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
