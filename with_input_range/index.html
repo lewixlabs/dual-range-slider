@@ -11,15 +11,18 @@
         * {
             box-sizing: border-box;
         }
+
         body {
             margin: 0;
             padding: 100px;
         }
+
         .rangeWrap {
             position: relative;
             width: 100%;
             height: 32px;
         }
+
         .rangeTrack {
             position: absolute;
             top: 0;
@@ -32,6 +35,7 @@
             top: 50%;
             transform: translateY(-50%);
         }
+
         .rangeTrackFill {
             position: absolute;
             top: 0;
@@ -42,7 +46,9 @@
             top: 50%;
             transform: translateY(-50%);
         }
-        .rangeThumbLeft, .rangeThumbRight {
+
+        .rangeThumbLeft,
+        .rangeThumbRight {
             position: absolute;
             top: 0;
             left: 0;
@@ -53,18 +59,23 @@
             transform: translateX(-50%);
             cursor: pointer;
         }
+
         .rangeThumbLeft {
             left: 0%;
         }
+
         .rangeThumbRight {
             left: 100%;
         }
-        .rangeInputLeft:focus ~ .rangeThumbLeft {
+
+        .rangeInputLeft:focus~.rangeThumbLeft {
             box-shadow: 0 0 0 3px rgb(158, 210, 224);
         }
-        .rangeInputRight:focus ~ .rangeThumbRight {
+
+        .rangeInputRight:focus~.rangeThumbRight {
             box-shadow: 0 0 0 3px rgb(158, 210, 224);
         }
+
         .invisible {
             opacity: 0;
             height: 0;
@@ -102,10 +113,16 @@
         const thumbLeft = document.querySelector(".rangeThumbLeft");
         const thumbRight = document.querySelector(".rangeThumbRight");
 
-        thumbLeft.addEventListener("mousedown", function() {
+        thumbLeft.addEventListener("mousedown", function () {
             inputLeft.focus();
         });
-        thumbRight.addEventListener("mousedown", function() {
+        thumbLeft.addEventListener("touchstart", function () {
+            inputLeft.focus();
+        });
+        thumbRight.addEventListener("mousedown", function () {
+            inputRight.focus();
+        });
+        thumbRight.addEventListener("touchstart", function () {
             inputRight.focus();
         });
 
@@ -116,6 +133,13 @@
 
         function clamp(value, min, max) {
             return Math.min(Math.max(value, min), max);
+        }
+
+        // Utility unificata per ottenere la coordinata X (mouse o touch)
+        function getClientX(evt) {
+            if (evt.touches && evt.touches.length) return evt.touches[0].clientX;
+            if (evt.changedTouches && evt.changedTouches.length) return evt.changedTouches[0].clientX;
+            return evt.clientX;
         }
 
         var THUMB_SIZE = 32;
@@ -185,23 +209,30 @@
 
         function handleChange(input, thumb) {
             function handleDown(evtDown) {
+                evtDown.preventDefault();
                 function handleMove(evtMove) {
-                    var mouseX = evtMove.clientX;
+                    evtMove.preventDefault();
+                    var mouseX = getClientX(evtMove);
                     var newLeft = calcThumbPosition(mouseX, thumb);
                     calcTrackFill();
                     calcInputValues(input, newLeft);
                     logInputValues();
-                };
+                }
                 document.addEventListener("mousemove", handleMove);
+                document.addEventListener("touchmove", handleMove, { passive: false });
 
                 function handleUp() {
                     document.removeEventListener("mousemove", handleMove);
+                    document.removeEventListener("touchmove", handleMove);
                     document.removeEventListener("mouseup", handleUp);
-                };
+                    document.removeEventListener("touchend", handleUp);
+                }
                 document.addEventListener("mouseup", handleUp);
-            };
+                document.addEventListener("touchend", handleUp);
+            }
             thumb.addEventListener("mousedown", handleDown);
-        };
+            thumb.addEventListener("touchstart", handleDown, { passive: false });
+        }
 
         handleChange(inputLeft, thumbLeft);
         handleChange(inputRight, thumbRight);
@@ -222,10 +253,10 @@
             startEl.innerHTML = inputLeft.value;
             endEl.innerHTML = inputRight.value;
         }
-        inputLeft.addEventListener("input", function() {
+        inputLeft.addEventListener("input", function () {
             showData();
         });
-        inputRight.addEventListener("input", function() {
+        inputRight.addEventListener("input", function () {
             showData();
         });
     </script>
